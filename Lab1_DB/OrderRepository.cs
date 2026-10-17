@@ -19,7 +19,6 @@ namespace MultiStoreLab
             _getTransaction = getTransaction;
         }
 
-        // Читання через View v_store_catalog
         public async Task<IEnumerable<StoreCatalogDto>> GetStoreCatalogAsync(long storeId)
         {
             const string sql = """
@@ -36,7 +35,6 @@ namespace MultiStoreLab
             return await _connection.QueryAsync<StoreCatalogDto>(sql, new { StoreId = storeId }, transaction: _getTransaction());
         }
 
-        // Читання через View v_order_details
         public async Task<OrderDetailsDto?> GetOrderDetailsByIdAsync(long orderId)
         {
             const string sql = """
@@ -53,7 +51,6 @@ namespace MultiStoreLab
             return await _connection.QueryFirstOrDefaultAsync<OrderDetailsDto>(sql, new { OrderId = orderId }, transaction: _getTransaction());
         }
 
-        // Запис через збережену процедуру sp_create_order
         public async Task<long> CreateOrderAsync(long userId, long storeId, List<CreateOrderItemModel> items, long addressId, int shippingMethodId, string? couponCode = null)
         {
             var itemsJson = JsonSerializer.Serialize(items);
@@ -72,7 +69,6 @@ namespace MultiStoreLab
             return p.Get<long>("p_order_id");
         }
 
-        // Запис через збережену процедуру sp_pay_order
         public async Task PayOrderAsync(long orderId, string paymentMethod, string transactionId, long userId)
         {
             const string sql = "CALL sp_pay_order(@OrderId, @PaymentMethod::payment_method, @TransactionId, @UserId);";
